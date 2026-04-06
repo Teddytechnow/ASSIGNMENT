@@ -102,14 +102,7 @@ export default function Home() {
               const sum = summaries.find((s) => s.index === i + 1);
               return (
                 <div key={i} className="border border-gray-200 rounded p-3">
-                  
-                    href={item.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sm font-medium text-blue-700 hover:underline block mb-1"
-                  >
-                    {item.title}
-                  </a>
+                  <a href={item.link} target="_blank" rel="noreferrer" className="text-sm font-medium text-blue-700 hover:underline block mb-1">{item.title}</a>
                   <p className="text-xs text-gray-400 mb-2">{item.pubDate}</p>
                   {sum && (
                     <div className="bg-gray-50 rounded p-2 text-sm">
