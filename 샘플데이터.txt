@@ -1,156 +1,64 @@
-"use client"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import HyperspaceSplash from "@/components/HyperspaceSplash"
+일지이력조회
+안태윤 님이 로그인하셨습니다. 로그아웃
+출력 닫기
+MQT35403(버전3)
+■ 시액조제일지 정보
+시험자	김지수	시작일시	2026-04-14 08:29:49	종료일시	2026-04-14 08:54:20
+시액조제번호	
+KJS-60414-01
+ 저장	유효기한	
+2026-07-13
+Select date	저장
+승인정보
 
-export default function LandingPage() {
-  const router = useRouter()
-  const [showSplash, setShowSplash] = useState(true)
 
-  const handleSplashComplete = () => {
-    setShowSplash(false)
-  }
-  const [showModal, setShowModal] = useState(false)
-  const [chg, setChg] = useState({ 사번: "", currentPw: "", newPw: "" })
-  const [chgLoading, setChgLoading] = useState(false)
-  const [chgError, setChgError] = useState("")
-  const [chgSuccess, setChgSuccess] = useState("")
-  const [capsLock, setCapsLock] = useState(false)
-  const [hoveredRole, setHoveredRole] = useState<string | null>(null)
+■ 시액조제일지
+ㆍ물·메탄올용액(2:8)
+내용	기록값	단위	물질정보	기기정보	User Name	TimeStamp	사유
+ 
+물 100mL와 메탄올 400mL를 혼화한다
+ 400
+ 
+mL
+물질명:	메탄올, 메틸알콜(HPLC), Methyl alcohol, Methanol
+라벨번호:	R260301711
+김지수	2026-04-14 08:53:56	보기
+ㆍ비고
+로고
+ID ver.0.1
 
-  const roles = [
-    { id: "tester", title: "시험자", description: "시액조제일지 탬플릿 및 내용 조회", route: "/tester", borderColor: "border-[#A8D5A2]", hoverBg: "hover:bg-[#EDF7EC]", shadowColor: "hover:shadow-lg", textColor: "text-[#2C6B2F]" },
-    { id: "reviewer", title: "검토자", description: "시액조제일지 AI 검토", route: "/reviewer", borderColor: "border-[#F5D87A]", hoverBg: "hover:bg-[#FEFAE8]", shadowColor: "hover:shadow-lg", textColor: "text-[#7A5F10]" },
-    { id: "admin", title: "관리자", description: "시스템 관리 및 설정", route: "/admin", borderColor: "border-[#D4C5E2]", hoverBg: "hover:bg-[#F4F0F8]", shadowColor: "hover:shadow-lg", textColor: "text-[#5A4572]" },
-  ]
-
-  const openModal = () => {
-    setChg({ 사번: "", currentPw: "", newPw: "" }); setChgError(""); setChgSuccess("")
-    setCapsLock(false)
-    setShowModal(true)
-  }
-
-  const handleChangePw = async () => {
-    if (!chg.사번 || !chg.currentPw || !chg.newPw) { setChgError("모든 항목을 입력하세요."); return }
-    if (chg.currentPw === chg.newPw) { setChgError("새 비밀번호가 현재 비밀번호와 같습니다."); return }
-    setChgLoading(true); setChgError(""); setChgSuccess("")
-    try {
-      const res = await fetch("/api/miso", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "user-change-password", 사번: chg.사번, currentPassword: chg.currentPw, newPassword: chg.newPw }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        setChgSuccess("비밀번호가 변경되었습니다.")
-        setChg({ 사번: "", currentPw: "", newPw: "" })
-      } else {
-        setChgError(data.error || "변경 실패")
-      }
-    } catch { setChgError("서버 오류가 발생했습니다.") }
-    finally { setChgLoading(false) }
-  }
-
-  return (
-    <>
-      <AnimatePresence>
-        {showSplash && <HyperspaceSplash onComplete={handleSplashComplete} />}
-      </AnimatePresence>
-
-      <motion.div
-        className="h-screen flex flex-col bg-[#f8f9fa] overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: showSplash ? 0 : 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <style>{`
-        @keyframes sunRise {
-          from { opacity: 0; transform: translateY(30px) scale(0.9); }
-          to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .anim-logo    { animation: sunRise 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-        .anim-title   { animation: sunRise 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both; }
-        .anim-account { animation: sunRise 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both; }
-      `}</style>
-
-        <header className="bg-white border-b border-[#e9ecef] px-4 lg:px-8 py-3 flex-shrink-0">
-          <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-4">
-            <button type="button" onClick={() => router.push("/")} className="anim-logo rounded-md transition-opacity hover:opacity-80 focus:outline-none">
-              <Image src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%EC%9D%BC%EB%8F%99%EC%A0%9C%EC%95%BD-YxmulxFWqknQb4WsE3Wh8FCtHkLSSj.png" alt="일동제약" width={120} height={48} className="h-10 w-auto" />
-            </button>
-            <h1 className="anim-title text-sm lg:text-base font-bold text-[#212529] text-right">일동제약 시액조제일지 AI 시스템</h1>
-            <button onClick={openModal} className="anim-account flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#D4C5E2] bg-white hover:bg-[#F4F0F8] transition-all text-[#5A4572] text-xs font-semibold flex-shrink-0">
-              <span>&#128100;</span>
-              <span className="hidden sm:inline">계정 관리</span>
-            </button>
-          </div>
-        </header>
-
-        <main className="flex-1 min-h-0 px-4 lg:px-8 overflow-y-auto">
-          <div className="w-full max-w-6xl mx-auto h-full flex items-center justify-center py-4 lg:py-0">
-            <div className="w-full flex flex-col items-center justify-between gap-4 lg:gap-10 h-full lg:h-auto">
-              <div className="w-full max-w-3xl flex-shrink-0">
-                <div className="w-full rounded-2xl overflow-hidden">
-                  <video src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/character-uh27KEoumTDfvOYVOeabqfcao7ISsb.mp4" poster="/images/character.png" autoPlay loop muted playsInline disablePictureInPicture controlsList="nodownload noplaybackrate" className="w-full h-auto block pointer-events-none" style={{ objectFit: 'cover' }} />
-                </div>
-              </div>
-              <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-6 max-w-3xl flex-1 lg:flex-initial">
-                {roles.map((role) => (
-                  <Link key={role.id} href={role.route}
-                    onMouseEnter={() => setHoveredRole(role.id)}
-                    onMouseLeave={() => setHoveredRole(null)}
-                    className={`bg-white border ${role.borderColor} ${role.hoverBg} ${role.shadowColor} rounded-2xl p-5 lg:p-8 transition-all duration-300 hover:scale-[1.02] focus:outline-none focus:ring-3 focus:ring-offset-2 focus:ring-[#adb5bd] flex flex-col items-center justify-center gap-1.5 lg:gap-3 h-full lg:min-h-[180px] shadow-sm`}>
-                    <div className="mb-0.5 lg:mb-1" style={{ perspective: '500px' }}>
-                      <Image
-                        src={`/images/${role.id}.png`}
-                        alt={role.title}
-                        width={64}
-                        height={64}
-                        className="w-10 h-10 lg:w-16 lg:h-16 object-contain transition-transform duration-500"
-                        style={{
-                          transform: hoveredRole === role.id ? 'rotateY(360deg)' : 'rotateY(0deg)'
-                        }}
-                      />
-                    </div>
-                    <h3 className={`text-lg lg:text-2xl font-bold ${role.textColor}`}>{role.title}</h3>
-                    <p className={`text-xs lg:text-sm ${role.textColor} opacity-80 whitespace-nowrap`}>{role.description}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </main>
-
-        <footer className="text-center py-2 text-[#adb5bd] text-xs border-t border-[#e9ecef] flex-shrink-0">© Tom, Jerry & Teddy</footer>
-
-        {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4" onClick={() => setShowModal(false)}>
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
-              <div className="px-6 pt-5 pb-1">
-                <h3 className="text-sm font-bold text-[#5A4572]">비밀번호 변경</h3>
-              </div>
-              <div className="p-6 flex flex-col gap-4">
-                <p className="text-xs text-[#868e96]">현재 비밀번호 확인 후 새 비밀번호로 변경합니다.</p>
-                <div className="flex flex-col gap-3">
-                  <input value={chg.사번} onChange={e => { setChg(v => ({ ...v, 사번: e.target.value })); setChgError("") }}
-                    onKeyDown={e => { if (e.key === "Enter") handleChangePw() }}
-                    placeholder="사번" className="w-full px-4 py-3 border border-[#dee2e6] rounded-xl bg-[#fafafa] text-sm focus:outline-none focus:border-[#D4C5E2] font-mono" />
-                  <input type="password" value={chg.currentPw} onChange={e => { setChg(v => ({ ...v, currentPw: e.target.value })); setChgError("") }}
-                    onKeyDown={e => { setCapsLock(e.getModifierState("CapsLock")); if (e.key === "Enter") handleChangePw() }}
-                    onKeyUp={e => setCapsLock(e.getModifierState("CapsLock"))}
-                    placeholder="현재 비밀번호" className="w-full px-4 py-3 border border-[#dee2e6] rounded-xl bg-[#fafafa] text-sm focus:outline-none focus:border-[#D4C5E2]" />
-                  <input type="password" value={chg.newPw} onChange={e => { setChg(v => ({ ...v, newPw: e.target.value })); setChgError("") }}
-                    onKeyDown={e => { setCapsLock(e.getModifierState("CapsLock")); if (e.key === "Enter") handleChangePw() }}
-                    onKeyUp={e => setCapsLock(e.getModifierState("CapsLock"))}
-                    placeholder="새 비밀번호" className="w-full px-4 py-3 border border-[#dee2e6] rounded-xl bg-[#fafafa] text-sm focus:outline-none focus:border-[#D4C5E2]" />
-                </div>
-                {capsLock && <p className="text-xs text-[#e67700]">⚠ Caps Lock이 켜져 있습니다.</p>}
-                {chgError && <p className="text-xs text-[#E31937] text-center">{chgError}</p>}
-                {chgSuccess && <p className="text-xs text-[#2C6B2F] text-center font-semibold">{chgSuccess}</p>}
-                <div className="flex gap-2">
-                  <button onClick={() => setShowModal(false)} className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-[#e9ecef] text-[#868e96] hover:bg-[#dee2e6]">취소</button>
-                  <button onClick={handleChangePw} disabled={chgLoading} className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-[#D4C5E2] text-[#5A4572] hover:bg-[#C0AED8] disabled:opacity-50">
-                    {chgLoading ? "처리 중..." : "변경"}
+사용일지
+점검일지
+시액조제일지
+시액조제일지 버전 목록조회 Excel
+양식명	
+문서번호	
+조회 목록조회 Excel
+작성일	
+	
+2026-03-18
+Select date	-	
+2026-04-18
+Select date
+시작일	
+	
+2026-03-18
+Select date	-	
+2026-04-18
+Select date
+종료일	
+	
+2026-03-18
+Select date	-	
+2026-04-18
+Select date
+유효기한	
+	
+2026-03-18
+Select date	-	
+2026-04-18
+Select date
+작성자	
+시액조제번호	
+60414
+copyrightⓒ InterfaceInfoTech 2019 All Rights Reserved
